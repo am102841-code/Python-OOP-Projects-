@@ -67,21 +67,15 @@ class Pet():
             self.hunger_change += 5
 
     def update_level(self):
-        if self.fed == 2 and self.played == 2 and self.slept == 2:
-            self.level += 1
-            self.level_change = 1
+        total_actions = self.fed + self.played + self.slept
+        new_level = total_actions // 6
+        if new_level > self.level:
+            self.level_change = new_level - self.level
+            self.level = new_level
+            print(f"{self.name} has leveled up to level {self.level}!")
+        else:
+            self.level_change = 0
 
-        if self.fed == 4 and self.played == 4 and self.slept == 4:
-            self.level += 1
-            self.level_change = 1
-
-        if self.fed == 6 and self.played == 6 and self.slept == 6:
-            self.level += 1
-            self.level_change = 1
-
-        if self.fed == 8 and self.played == 8 and self.slept == 8:
-            self.level += 1
-            self.level_change = 1
 
     def status(self):
         self.update_state()
@@ -202,7 +196,7 @@ class Pet():
             elif self.food_choice == "expensive":
                 chance = random.randint(1, 10)
             else:
-                chance = random.randint(1, 5)
+                chance = random.randint(1, 8)
 
             if chance == 2:
                 print("Your pet has stomach pain!")
@@ -218,7 +212,7 @@ class Pet():
 
             else:
                 print(Fore.GREEN + f"{self.name} is more happy and healthy!" + Style.RESET_ALL)
-                self.hunger -= 10
+                self.hunger -= 20
                 self.energy += 10
                 self.happiness += 10
                 self.health += 10
@@ -318,6 +312,7 @@ def game():
             break
 
         pet.status()
+        pet.update_level()
         pet.choices() # Show choices
         time.sleep(1)
 
