@@ -16,6 +16,9 @@ A grade management system that organizes student information and calculates acad
 ### 🏥 Medical Data Validator
 A data validation system that checks medical records for proper formatting, required fields, and correct data types.
 
+### ⚽ Physics Simulator 
+A simulation of physics using small figures with a mix of python and pygame. 
+
 ## Skills Practiced
 
 - Object-Oriented Programming (OOP)
