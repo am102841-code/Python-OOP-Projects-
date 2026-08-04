@@ -1,7 +1,54 @@
 from colorama import Fore, Style, init
-import random, time, pygame
+import random, time, pygame, json, os
+
+leaderboard_file = "leaderboard.json"
 
 init()
+
+# Leaderboard function
+def load_leaderboard():
+    if not os.path.exists(leaderboard_file):
+        return []
+
+    with open(leaderboard_file, "r") as file:
+        leaderboard = json.load(file)
+
+    return leaderboard
+
+def save_leaderboard(leaderboard):
+    with open(leaderboard_file, "w") as file:
+        json.dump(leaderboard, file, indent=4)
+
+def add_to_leaderboard(pet):
+    leaderboard = load_leaderboard()
+
+    player = {
+        "name": pet.name,
+        "level": pet.level,
+        "health": pet.health,
+        "doggy_coins": pet.doggy_coins
+    }
+
+    leaderboard.append(player)
+
+    save_leaderboard(leaderboard)
+
+def show_leaderboard():
+    leaderboard = load_leaderboard()
+
+    leaderboard.sort(key=lambda player: player["level"], reverse=True)
+
+    print("\n========== LEADERBOARD ==========")
+
+    for position, player in enumerate(leaderboard, start=1):
+        print(
+            f"{position}. {player['name']} "
+            f"| Level: {player['level']} "
+            f"| Health: {player['health']} "
+            f"| Coins: {player['doggy_coins']}"
+        )
+
+    print("=================================\n")
 
 
 class Pet():
@@ -29,6 +76,9 @@ class Pet():
         self.doggy_coins_change = 0
         self.food_choice = "" # "cheap", "moderate", "expensive"
         self.can_feed = None
+        self.achievements = []
+        self.all_achievements = ["Mega Eater", "Play Master", "Top Dog", "New Name, Who Dis?"]
+        self.dead = False
 
 
     def choices(self):
@@ -76,6 +126,32 @@ class Pet():
         else:
             self.level_change = 0
 
+    def update_achievements(self):
+        if self.fed == 10 and "Mega Eater" not in self.achievements:
+            print("You unlocked the Mega Eater achievement!")
+            self.achievements.append("Mega Eater")
+
+        if self.played == 10 and "Play Master" not in self.achievements:
+            print("You unlocked the Play Master achievement!")
+            self.achievements.append("Play Master")
+
+        if self.level == 5 and "Top Dog" not in self.achievements:
+            print("You unlocked the Top Dog achievement!")
+            self.achievements.append("Top Dog")
+
+        if self.named == 1 and "New Name" not in self.achievements:
+            print("You unlocked the 'New Name, Who Dis?' achievement!")
+            self.achievements.append("New Name, Who Dis?")
+
+    def view_achievements(self):
+        print("=======================")
+        print("Achievements:")
+        for achievement in self.all_achievements:
+            if achievement in self.achievements:
+                print(f"- {achievement}")
+            else:
+                print("- ???")
+        print("=======================")
 
     def status(self):
         self.update_state()
@@ -172,7 +248,7 @@ class Pet():
         if self.food < 5:
             print("You don't have enough food!")
             choice = input("Do you want to buy more food at the shop? (yes/no) \n < ")
-            if choice == "yes" or "Yes":
+            if choice == "yes" or choice == "Yes":
                 self.shop()
             else:
                 print(f"Sorry, you cannot feed {self.name}...")
@@ -283,6 +359,7 @@ class Pet():
 
 
 def game():
+    global choice
     print(Fore.BLUE + "Welcome to the Pet Simulator Game!" + Style.RESET_ALL)
     time.sleep(1) # Wait for 1 second
     print("Your new pet awaits you...")
@@ -290,30 +367,47 @@ def game():
     time.sleep(1)
     pet = Pet()
     pet.status()
+
     while True:
-        choice = input("Would you like to do for your pet? (feed, sleep, play, rename) \n < ")
-        if choice == "feed" or choice == "Feed":
+        print("What would you like to do for your pet? (feed, sleep, play, rename, view achievements)")
+        print("Enter your choice (f, s, p, r, v)")
+        choice = input("< ")
+
+        if choice == "feed" or choice == "Feed" or choice == "f":
             pet.feed()
-        elif choice == "sleep" or choice == "Sleep":
+        elif choice == "sleep" or choice == "Sleep" or choice == "s":
             pet.sleep()
-        elif choice == "play" or choice == "Play":
+        elif choice == "play" or choice == "Play" or choice == "p":
             pet.play()
-        elif choice == "rename" or choice == "Rename":
+        elif choice == "rename" or choice == "Rename" or choice == "r":
             pet.rename()
+        elif choice == "view achievements" or choice == "View Achievements" or choice == "v":
+            pet.update_achievements()
+            pet.view_achievements()
         else:
-            choice = input("Invalid choice. Please try again. \n < ")
+            choice = input("Invalid choice. Please press enter. \n < ")
             continue
 
         # check if pet is dead
         if pet.hunger >= 100 or pet.energy <= 20 or pet.happiness <= 20:
             print(f"{pet.name} has passed away.")
+            pet.dead = True
             time.sleep(1)
             print("Game Over.")
+            add_to_leaderboard(pet)
+            print("Your score has been added to the leaderboard!")
+            show_leaderboard()
             break
 
-        pet.status()
+        if choice == "view achievements" or choice == "View Achievements" or choice == "v":
+            pass
+
+        else:
+            pet.status()
+
         pet.update_level()
         pet.choices() # Show choices
+        pet.update_achievements() # Add new achievements
         time.sleep(1)
 
 game()
