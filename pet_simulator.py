@@ -79,6 +79,8 @@ class Pet():
         self.achievements = []
         self.all_achievements = ["Mega Eater", "Play Master", "Top Dog", "New Name, Who Dis?"]
         self.dead = False
+        self.games = []
+        self.played = 0
 
 
     def choices(self):
@@ -88,6 +90,7 @@ class Pet():
         print(Fore.YELLOW + f"Play: {self.played}" + Style.RESET_ALL)
         print(Fore.CYAN + f"Sleep: {self.slept}" + Style.RESET_ALL)
         print(Fore.GREEN + f"Rename: {self.named}" + Style.RESET_ALL) # rename option
+        print(Fore.BLUE + f"Mini Games: {self.played}" + Style.RESET_ALL)
         print(f"Total Commands: {self.fed + self.played + self.slept}")
         print("-------------------")
 
@@ -201,9 +204,115 @@ class Pet():
             print(Fore.CYAN + f"Energy: {self.energy} (+{self.energy_change})" + Style.RESET_ALL)
         print("-----------------")
 
+    def mini_games(self):
+        self.played += 1
+        print("Welcome to the Mini Games Menu!")
+        time.sleep(0.5)
+        print("You can win rewards for your pet!")
+        games = ["Number Guesser", "Memory Match", "Pet Trivia"]
+        game = input(f"Which game do you want to play? \n 1. {games[0]} \n 2. {games[1]} \n 3. {games[2]} \n < ")
+        if game == "1":
+            self.number_guesser()
+        elif game == "2":
+            self.memory_match()
+        elif game == "3":
+            self.pet_trivia()
+
+    def number_guesser(self):
+        print("Welcome to the Number Guesser game!")
+        time.sleep(0.5)
+        print("You have 5 attempts to guess the number between 1 and 25.")
+        number = random.randint(1, 25)
+        #print(f"number: {number}")
+        attempts = 0
+
+        while True:
+            if attempts == 5:
+                print("You've run out of attempts!")
+                time.sleep(0.5)
+                print(f"The number was {number}")
+                break
+
+            else:
+                choice = int(input("Guess a number\n < "))
+                if choice == number:
+                    attempts += 1
+                    print("Correct!")
+                    time.sleep(0.5)
+                    print(f"You guessed the number in {attempts} attempts!")
+                    time.sleep(0.5)
+                    print("You win 10 doggy coins!")
+                    self.doggy_coins += 10
+                    print(f"Total Doggy Coins: {self.doggy_coins}")
+                    break
+
+                else:
+                    if choice < number:
+                        attempts += 1
+                        print("Too low!")
+                    elif choice > number:
+                        attempts += 1
+                        print("Too high!")
+
+
+    def memory_match(self):
+        codes = ["DOGCAT", "CATBUNNY", "C767674", "H645A8M", "C1A2T3S"]
+        round = 0
+        points = 0
+        timer = None 
+
+    def pet_trivia(self):
+        question_amount = 3
+        points = 0
+        print("Welcome to Pet Trivia!")
+        time.sleep(0.5)
+        print(f"You have {question_amount} questions.")
+        time.sleep(0.5)
+        print("Answer questions correctly to win doggy coins!")
+
+        while True:
+            question = input("Which animal is known as man's best friend? \n < ")
+            answer = "Dog"
+            if question == "dog" or question == "Dog":
+                time.sleep(0.5)
+                print("Correct!")
+                points += 1
+            else:
+                time.sleep(0.5)
+                print(f"Wrong answer. The correct answer was {answer}")
+
+            question2 = input("Which pet is owned by more U.S. households: dogs or cats? \n < ")
+            answer = "Dog"
+            if question2 == "dogs" or question2 == "Dogs":
+                time.sleep(0.5)
+                print("Correct!")
+                points += 1
+            else:
+                time.sleep(0.5)
+                print(f"Wrong answer. The correct answer was {answer}")
+
+            question3 = input("According to a 2023 Pew survey, what percentage of U.S. adults owned a pet? \n A. 62% \n B. 49% \n C. 81% \n < ")
+            answer = "A, or 62%"
+            if question3 == "a" or question3 == "A" or question3 == "62%":
+                time.sleep(0.5)
+                print("Correct!")
+                points += 1
+                break
+            else:
+                time.sleep(0.5)
+                print(f"Wrong answer. The correct answer was {answer}")
+                break
+
+        print(f"You got {points} points!")
+        time.sleep(0.5)
+        print(f"You win {points * 10} doggy coins!")
+        time.sleep(0.5)
+        self.doggy_coins += points * 10
+        print(f"Total Doggy Coins: {self.doggy_coins}")
+
     def shop(self):
         print("Select an item to buy (1/2/3):")
-        time.sleep(1)
+        time.sleep(0.5)
         print("1. Happy Pup Chow - 5 doggy coins")
         print("2. Nature's Bowl - 10 doggy coins")
         print("3. Heritage Hound Reserve - 15 doggy coins")
@@ -369,8 +478,8 @@ def game():
     pet.status()
 
     while True:
-        print("What would you like to do for your pet? (feed, sleep, play, rename, view achievements)")
-        print("Enter your choice (f, s, p, r, v)")
+        print("What would you like to do for your pet? (feed, sleep, play, rename, view achievements, mini games)")
+        print("Enter your choice (f, s, p, r, v, m)")
         choice = input("< ")
 
         if choice == "feed" or choice == "Feed" or choice == "f":
@@ -384,6 +493,9 @@ def game():
         elif choice == "view achievements" or choice == "View Achievements" or choice == "v":
             pet.update_achievements()
             pet.view_achievements()
+
+        elif choice == "mini games" or choice == "Mini Games" or choice == "m":
+            pet.mini_games()
         else:
             choice = input("Invalid choice. Please press enter. \n < ")
             continue
@@ -400,6 +512,9 @@ def game():
             break
 
         if choice == "view achievements" or choice == "View Achievements" or choice == "v":
+            pass
+
+        elif choice == "mini games" or choice == "Mini Games" or choice == "m":
             pass
 
         else:
