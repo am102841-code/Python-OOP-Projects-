@@ -1,6 +1,6 @@
 # Python OOP Projects
 
-A collection of Python projects designed to practice and demonstrate Object-Oriented Programming (OOP) concepts, including classes, objects, encapsulation, and structured data management.
+A collection of Python projects designed to practice and demonstrate Object-Oriented Programming (OOP) concepts, including classes, objects, encapsulation, and structured data management. Check out the **wiki for this project** that goes in depth into many topics such as future plans, code structure, and coding concepts. 
 
 ## Projects
 
