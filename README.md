@@ -10,6 +10,9 @@ A virtual pet simulation that uses classes and object interactions to manage pet
 ### 💼 Employee Payroll System
 A payroll management system that demonstrates object modeling, employee data handling, and salary calculations.
 
+### 🕹️ Inventory System 
+An inventory system that can be used in different types of video games which uses data handling and lists. 
+
 ### 🎓 Student Grade System
 A grade management system that organizes student information and calculates academic performance using OOP principles.
 
