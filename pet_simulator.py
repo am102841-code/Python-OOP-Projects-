@@ -254,12 +254,55 @@ class Pet():
                         attempts += 1
                         print("Too high!")
 
+    def clear_screen(self):
+        print("\n" * 200)
+
 
     def memory_match(self):
-        codes = ["DOGCAT", "CATBUNNY", "C767674", "H645A8M", "C1A2T3S"]
-        round = 0
+        attempts = 0
+        round = 1
+        time_limit = 5
         points = 0
-        timer = None 
+
+        def check_score():
+            nonlocal points
+            if round == 1:
+                for word in words_found:
+                    if word == "dog" or word == "cat" or word == "bone":
+                        points += 1
+            time.sleep(0.5)
+            print(f"You got {points} points!")
+
+        if round == 1:
+            print("Find three words related to pets in 5 seconds.")
+            time.sleep(2)
+            print("Type Enter to start")
+            ready = input("< ")
+            if ready == "":
+                print("D O G X B")
+                print("Q W E R O")
+                print("A C A T ")
+                print("E B O N E")
+                print("U R Y E")
+                timer = time.time()
+
+                while True:
+                    time.sleep(0.01)
+                    time_elapsed = time.time() - timer
+    
+                    if time_elapsed >= time_limit:
+                        self.clear_screen()
+                        print("Time's up!")
+                        words_found = input("Enter the words you spotted: \n < ").lower().split()
+                        check_score()
+
+                        round = 2
+                        break
+
+        if round == 2:
+                pass
+
+
 
     def pet_trivia(self):
         question_amount = 3
