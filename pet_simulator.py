@@ -77,7 +77,7 @@ class Pet():
         self.food_choice = "" # "cheap", "moderate", "expensive"
         self.can_feed = None
         self.achievements = []
-        self.all_achievements = ["Mega Eater", "Play Master", "Top Dog", "New Name, Who Dis?"]
+        self.all_achievements = ["Mega Eater", "Play Master", "Top Dog", "New Name, Who Dis?", "First Play", "Rich Dog", "First Savings", "Starving Dog"]
         self.dead = False
         self.games = []
         self.played = 0
@@ -133,6 +133,22 @@ class Pet():
         if self.fed == 10 and "Mega Eater" not in self.achievements:
             print("You unlocked the Mega Eater achievement!")
             self.achievements.append("Mega Eater")
+
+        if self.hunger == 80 and "Starving Dog" not in self.achievements:
+            print("You unlocked the Starving Dog achievement!")
+            self.achievements.append("Starving Dog")
+
+        if self.doggy_coins == 10 and "First Savings" not in self.achievements:
+            print("You unlocked the First Savings achievement!")
+            self.achievements.append("First Savings")
+
+        if self.doggy_coins == 100 and "Rich Dog" not in self.achievements:
+            print("You unlocked the Rich Dog achievement!")
+            self.achievements.append("Rich Dog")
+
+        if self.played == 1 and "First Play" not in self.achievements:
+            print("You unlocked the First Play achievement!")
+            self.achievements.append("First Play")
 
         if self.played == 10 and "Play Master" not in self.achievements:
             print("You unlocked the Play Master achievement!")
@@ -209,8 +225,8 @@ class Pet():
         print("Welcome to the Mini Games Menu!")
         time.sleep(0.5)
         print("You can win rewards for your pet!")
-        games = ["Number Guesser", "Memory Match", "Pet Trivia"]
-        game = input(f"Which game do you want to play? \n 1. {games[0]} \n 2. {games[1]} \n 3. {games[2]} \n < ")
+        games = ["Number Guesser", "Memory Match", "Pet Trivia", "Reaction Test"]
+        game = input(f"Which game do you want to play? \n 1. {games[0]} \n 2. {games[1]} \n 3. {games[2]} \n  4. {games[3]} \n< ")
         if game == "1":
             self.number_guesser()
         elif game == "2":
@@ -218,6 +234,8 @@ class Pet():
         elif game == "3":
             self.pet_trivia()
 
+        elif game == "4":
+            self.reaction_test()
     def number_guesser(self):
         print("Welcome to the Number Guesser game!")
         time.sleep(0.5)
@@ -254,6 +272,45 @@ class Pet():
                         attempts += 1
                         print("Too high!")
 
+    def reaction_test(self):
+        print("Welcome to the Reaction Test game!")
+        time.sleep(0.5)
+        print("When you see 'GO!', press Enter as fast as possible.")
+        time.sleep(1)
+        print("Press Enter when you are ready...")
+        time.sleep(1)
+
+        wait_time = random.uniform(2, 6)
+        time.sleep(wait_time)
+        print("\n GO!")
+
+        start_time = time.time()
+        input()
+
+        end_time = time.time()
+        reaction_time = end_time - start_time
+        print(f"Your reaction time: {reaction_time:.2f} seconds")
+
+        if reaction_time < 0.25:
+            coins = 30
+            print("INCREDIBLE REACTION TIME!")
+        elif reaction_time < 0.4:
+            coins = 20
+            print("Great reaction time!")
+        elif reaction_time < 0.6:
+            coins = 10
+            print("Good reaction time!")
+        else:
+            coins = 5
+            print("Keep practicing!")
+
+        self.doggy_coins += coins
+        self.doggy_coins_change = coins
+
+        print(f"You won {coins} Doggy Coins!")
+        print(f"Total Doggy Coins: {self.doggy_coins}")
+
+
     def clear_screen(self):
         print("\n" * 200)
 
@@ -263,15 +320,34 @@ class Pet():
         round = 1
         time_limit = 5
         points = 0
+        points_gained = 0
 
         def check_score():
-            nonlocal points
+            nonlocal points, points_gained
             if round == 1:
                 for word in words_found:
                     if word == "dog" or word == "cat" or word == "bone":
                         points += 1
+                        points_gained += 1
+
+            if round == 2:
+                for word in words_found:
+                    if word == "puppy" or word == "fetch" or word == "play":
+                        points += 1
+                        points_gained += 1
+
+            if round == 3:
+                for word in words_found:
+                    if word == "meow" or word == "purr" or word == "collar":
+                        points += 1
+                        points_gained += 1
+
             time.sleep(0.5)
-            print(f"You got {points} points!")
+            if points_gained == 1:
+                print(f"You got {points_gained} point!")
+            else:
+                print(f"You got {points_gained} points!")
+            points_gained = 0
 
         if round == 1:
             print("Find three words related to pets in 5 seconds.")
@@ -289,18 +365,73 @@ class Pet():
                 while True:
                     time.sleep(0.01)
                     time_elapsed = time.time() - timer
-    
+
                     if time_elapsed >= time_limit:
                         self.clear_screen()
                         print("Time's up!")
-                        words_found = input("Enter the words you spotted: \n < ").lower().split()
+                        words_found = input("Enter the words you spotted (word1 word2 word3) : \n < ").lower().split()
                         check_score()
 
                         round = 2
                         break
 
         if round == 2:
-                pass
+                time_limit = 3
+                print("Round 2: Find three words related to pets in 3 seconds.")
+                time.sleep(1)
+                print("Type Enter to start")
+                ready = input("< ")
+                if ready == "":
+                    print("R U E X B D V")
+                    print("H P U P P Y I")
+                    print("U H F P L A Y")
+                    print("G B F E T C H")
+                    timer = time.time()
+
+                    while True:
+                        time.sleep(0.01)
+                        time_elapsed = time.time() - timer
+
+                        if time_elapsed >= time_limit:
+                            self.clear_screen()
+                            print("Time is up!")
+                            words_found = input("Enter the words you spotted (word1 word2 word3) : \n < ").lower().split()
+                            check_score()
+                            round = 3
+                            break
+        if round == 3:
+            time_limit = 2
+            print("Round 3: Find three words related to pets in 2 seconds.")
+            time.sleep(1)
+            print("Type Enter to start")
+            ready = input("< ")
+            if ready == "":
+                print("Y E M E O W R T")
+                print("A V P U R R V B")
+                print("Y X C O L L A R")
+                print("H Y V E B L L O")
+                timer = time.time()
+
+                while True:
+                    time.sleep(0.01)
+                    time_elapsed = time.time() - timer
+
+                    if time_elapsed >= time_limit:
+                        self.clear_screen()
+                        print("Time is up!")
+                        words_found = input("Enter the words you spotted (word1 word2 word3) : \n < ").lower().split()
+                        check_score()
+                        round = "end"
+                        break
+
+        if round == "end":
+            time.sleep(1)
+            print("Game Over!")
+            time.sleep(0.5)
+            print(f"You won {points * 10} doggy coins!")
+
+
+
 
 
 
