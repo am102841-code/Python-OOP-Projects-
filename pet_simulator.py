@@ -82,17 +82,66 @@ class Pet():
         self.games = []
         self.played = 0
 
+    def quests(self):
+        self.quests = ["Feed your pet 3 times", "Play a mini game", "Level up your pet", "Let your pet sleep once"]
+        self.completed_quests = []
+        self.random_quests = random.choice(self.quests)
+
+        if self.fed == 3 and "Feed your pet 3 times" not in self.completed_quests:
+            self.completed_quests.append("Feed your pet 3 times")
+            self.random_quests.remove("Feed your pet 3 times")
+            print("You completed a quest by feeding your pets 3 times!")
+            time.sleep(1)
+            print("You have been rewarded with 20 doggy coins!")
+            self.doggy_coins += 20
+            self.doggy_coins_change += 20
+            time.sleep(0.5)
+            print(f"Total Doggy Coins: {self.doggy_coins}")
+
+        if self.played == 1 and "Play a mini game" not in self.completed_quests:
+            self.completed_quests.append("Play a mini game")
+            self.random_quests.remove("Play a mini game")
+            print("You completed a quest by playing a mini game!")
+            time.sleep(1)
+            print("You have been rewarded with 20 doggy coins!")
+            self.doggy_coins += 20
+            self.doggy_coins_change += 20
+            time.sleep(0.5)
+            print(f"Total Doggy Coins: {self.doggy_coins}")
+
+        if self.level == 1 and "Level up your pet" not in self.completed_quests:
+            self.completed_quests.append("Level up your pet")
+            self.random_quests.remove("Level up your pet")
+            print("You completed a quest by leveling up your pet!")
+            time.sleep(1)
+            print("You have been rewarded with 20 doggy coins!")
+            self.doggy_coins += 20
+            self.doggy_coins_change += 20
+            time.sleep(0.5)
+            print(f"Total Doggy Coins: {self.doggy_coins}")
+
+        if self.slept == 1 and "Let your pet sleep once":
+            self.completed_quests.append("Let your pet sleep once")
+            self.random_quests.remove("Let your pet sleep once")
+            print("You completed a quest by letting your pet sleep!")
+            time.sleep(1)
+            print("You have been rewarded with 20 doggy coins!")
+            self.doggy_coins += 20
+            self.doggy_coins_change += 20
+            time.sleep(0.5)
+            print(f"Total Doggy Coins: {self.doggy_coins}")
+
 
     def choices(self):
-        print("\n")
-        print("----- Choices -----")
-        print(Fore.RED + f"Feed: {self.fed}" + Style.RESET_ALL)
-        print(Fore.YELLOW + f"Play: {self.played}" + Style.RESET_ALL)
-        print(Fore.CYAN + f"Sleep: {self.slept}" + Style.RESET_ALL)
-        print(Fore.GREEN + f"Rename: {self.named}" + Style.RESET_ALL) # rename option
-        print(Fore.BLUE + f"Mini Games: {self.played}" + Style.RESET_ALL)
-        print(f"Total Commands: {self.fed + self.played + self.slept}")
-        print("-------------------")
+            print("\n")
+            print("----- Choices -----")
+            print(Fore.RED + f"Feed: {self.fed}" + Style.RESET_ALL)
+            print(Fore.YELLOW + f"Play: {self.played}" + Style.RESET_ALL)
+            print(Fore.CYAN + f"Sleep: {self.slept}" + Style.RESET_ALL)
+            print(Fore.GREEN + f"Rename: {self.named}" + Style.RESET_ALL) # rename option
+            print(Fore.BLUE + f"Mini Games: {self.played}" + Style.RESET_ALL)
+            print(f"Total Commands: {self.fed + self.played + self.slept}")
+            print("-------------------")
 
     def update_state(self):
         # Critical conditions
