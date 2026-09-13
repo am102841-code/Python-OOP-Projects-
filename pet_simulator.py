@@ -2,8 +2,13 @@ from colorama import Fore, Style, init
 import random, time, pygame, json, os
 
 leaderboard_file = "leaderboard.json"
+save_directory = "saves"
 
 init()
+
+# Create saves directory if it doesn't exist
+if not os.path.exists(save_directory):
+    os.makedirs(save_directory)
 
 # Leaderboard function
 def load_leaderboard():
@@ -50,10 +55,160 @@ def show_leaderboard():
 
     print("=================================\n")
 
+# Save/Load functions
+def get_save_files():
+    """Get list of all save files in the saves directory"""
+    if not os.path.exists(save_directory):
+        return []
+    
+    save_files = []
+    for filename in os.listdir(save_directory):
+        if filename.endswith('.json'):
+            filepath = os.path.join(save_directory, filename)
+            try:
+                with open(filepath, "r") as file:
+                    save_data = json.load(file)
+                    save_files.append({
+                        "filename": filename,
+                        "name": save_data.get("name", "Unknown"),
+                        "level": save_data.get("level", 0),
+                        "doggy_coins": save_data.get("doggy_coins", 0)
+                    })
+            except (json.JSONDecodeError, KeyError):
+                continue
+    
+    return save_files
+
+def save_game(pet):
+    """Save game with slot selection"""
+    save_files = get_save_files()
+    
+    print("\n--- Save Game ---")
+    print("Select a save slot:")
+    
+    # Define colors to cycle through
+    colors = [Fore.RED, Fore.GREEN, Fore.YELLOW, Fore.BLUE, Fore.MAGENTA, Fore.CYAN, Fore.LIGHTBLUE_EX, Fore.LIGHTMAGENTA_EX]
+    
+    # Display existing saves
+    for i, save_info in enumerate(save_files, start=1):
+        color = colors[(i - 1) % len(colors)]
+        print(f"{color}{i}. {save_info['name']} | Level: {save_info['level']} | Coins: {save_info['doggy_coins']}{Style.RESET_ALL}")
+    
+    # Option to create new save
+    new_slot = len(save_files) + 1
+    new_color = colors[(new_slot - 1) % len(colors)]
+    print(f"{new_color}{new_slot}. Create new save slot{Style.RESET_ALL}")
+    
+    try:
+        choice = int(input("\nEnter your choice: "))
+        
+        if choice < 1 or choice > new_slot:
+            print("Invalid choice!")
+            return
+        
+        if choice == new_slot:
+            # Create new save file
+            save_filename = f"save_{len(save_files) + 1}.json"
+        else:
+            # Overwrite existing save
+            save_filename = save_files[choice - 1]["filename"]
+            confirm = input(f"Overwrite {save_files[choice - 1]['name']}'s save? (yes/no): ")
+            if confirm.lower() != "yes":
+                print("Save cancelled.")
+                return
+        
+        save_data = {
+            "name": pet.name,
+            "hunger": pet.hunger,
+            "happiness": pet.happiness,
+            "energy": pet.energy,
+            "state": pet.state,
+            "fed": pet.fed,
+            "played": pet.played,
+            "named": pet.named,
+            "slept": pet.slept,
+            "age": pet.age,
+            "health": pet.health,
+            "level": pet.level,
+            "food": pet.food,
+            "doggy_coins": pet.doggy_coins,
+            "food_choice": pet.food_choice,
+            "achievements": pet.achievements,
+            "completed_quests": pet.completed_quests if hasattr(pet, 'completed_quests') else []
+        }
+        
+        filepath = os.path.join(save_directory, save_filename)
+        with open(filepath, "w") as file:
+            json.dump(save_data, file, indent=4)
+        
+        print(f"Game saved successfully for {pet.name}!")
+    
+    except ValueError:
+        print("Invalid input!")
+
+def load_game():
+    """Load game with slot selection"""
+    save_files = get_save_files()
+    
+    if not save_files:
+        print("No save files found!")
+        return None
+    
+    print("\n--- Load Game ---")
+    print("Select a save file to load:")
+    
+    # Define colors to cycle through
+    colors = [Fore.RED, Fore.GREEN, Fore.YELLOW, Fore.BLUE, Fore.MAGENTA, Fore.CYAN, Fore.LIGHTBLUE_EX, Fore.LIGHTMAGENTA_EX]
+    
+    for i, save_info in enumerate(save_files, start=1):
+        color = colors[(i - 1) % len(colors)]
+        print(f"{color}{i}. {save_info['name']} | Level: {save_info['level']} | Coins: {save_info['doggy_coins']}{Style.RESET_ALL}")
+    
+    try:
+        choice = int(input("\nEnter your choice: "))
+        
+        if choice < 1 or choice > len(save_files):
+            print("Invalid choice!")
+            return None
+        
+        selected_save = save_files[choice - 1]
+        filepath = os.path.join(save_directory, selected_save["filename"])
+        
+        with open(filepath, "r") as file:
+            save_data = json.load(file)
+        
+        pet = Pet(name=save_data["name"])
+        pet.hunger = save_data["hunger"]
+        pet.happiness = save_data["happiness"]
+        pet.energy = save_data["energy"]
+        pet.state = save_data["state"]
+        pet.fed = save_data["fed"]
+        pet.played = save_data["played"]
+        pet.named = save_data["named"]
+        pet.slept = save_data["slept"]
+        pet.age = save_data["age"]
+        pet.health = save_data["health"]
+        pet.level = save_data["level"]
+        pet.food = save_data["food"]
+        pet.doggy_coins = save_data["doggy_coins"]
+        pet.food_choice = save_data["food_choice"]
+        pet.achievements = save_data["achievements"]
+        pet.completed_quests = save_data.get("completed_quests", [])
+        
+        print(f"Game loaded successfully for {pet.name}!")
+        return pet
+    
+    except (ValueError, json.JSONDecodeError, KeyError) as e:
+        print(f"Error loading save file: {e}")
+        return None
+
 
 class Pet():
-    def __init__(self):
-        self.name = input("Enter your pet's name: ")
+    def __init__(self, name=None):
+        if name is None:
+            self.name = input("Enter your pet's name: ")
+        else:
+            self.name = name
         self.hunger = 50
         self.happiness = 50
         self.energy = 50
@@ -697,12 +852,22 @@ def game():
     print("Your new pet awaits you...")
     print("Be careful, being a pet owner is not an easy job...")
     time.sleep(1)
-    pet = Pet()
+    
+    # Ask if user wants to load existing game
+    load_choice = input("Do you want to load a saved game? (yes/no) \n < ")
+    if load_choice == "yes" or load_choice == "Yes":
+        pet = load_game()
+        if pet is None:
+            print("Starting a new game instead...")
+            pet = Pet()
+    else:
+        pet = Pet()
+    
     pet.status()
 
     while True:
-        print("What would you like to do for your pet? (feed, sleep, play, rename, view achievements, mini games)")
-        print("Enter your choice (f, s, p, r, v, m)")
+        print("What would you like to do for your pet? (feed, sleep, play, rename, view achievements, mini games, save, load)")
+        print("Enter your choice (f, s, p, r, v, m, sv, ld)")
         choice = input("< ")
 
         if choice == "feed" or choice == "Feed" or choice == "f":
@@ -716,9 +881,14 @@ def game():
         elif choice == "view achievements" or choice == "View Achievements" or choice == "v":
             pet.update_achievements()
             pet.view_achievements()
-
         elif choice == "mini games" or choice == "Mini Games" or choice == "m":
             pet.mini_games()
+        elif choice == "save" or choice == "Save" or choice == "sv":
+            save_game(pet)
+        elif choice == "load" or choice == "Load" or choice == "ld":
+            loaded_pet = load_game()
+            if loaded_pet is not None:
+                pet = loaded_pet
         else:
             choice = input("Invalid choice. Please press enter. \n < ")
             continue
@@ -738,6 +908,12 @@ def game():
             pass
 
         elif choice == "mini games" or choice == "Mini Games" or choice == "m":
+            pass
+
+        elif choice == "load" or choice == "Load" or choice == "ld":
+            pass
+
+        elif choice == "save" or choice == "Save" or choice == "sv":
             pass
 
         else:
