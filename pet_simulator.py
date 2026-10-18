@@ -635,12 +635,8 @@ class Pet():
             print(f"You won {points * 10} doggy coins!")
 
 
-
-
-
-
     def pet_trivia(self):
-        question_amount = 3
+        question_amount = 5
         points = 0
         print("Welcome to Pet Trivia!")
         time.sleep(0.5)
@@ -675,11 +671,34 @@ class Pet():
                 time.sleep(0.5)
                 print("Correct!")
                 points += 1
-                break
+
             else:
                 time.sleep(0.5)
                 print(f"Wrong answer. The correct answer was {answer}")
-                break
+
+            question4 = input("What is dog's primary sense used to explore the world? \n A. Sight \n B. Hearing \n C. Smell \n < ")
+            answer = "C, or Smell"
+            if question4 == "c" or question4 == "C" or question4 == "Smell":
+                time.sleep(0.5)
+                print("Correct!")
+                points += 1
+
+            else:
+                time.sleep(0.5)
+                print(f"Wrong answer. The correct answer was {answer}")
+
+
+            question5 = input("Which animal is the most popular pet worldwide? \n A. Dog \n B. Cat \n C. Fish \n D. Bird \n < ")
+            answer = "C, or Fish"
+            if question5 == "c" or question5 == "C" or question5 == "Fish":
+                time.sleep(0.5)
+                print("Correct!")
+                points += 1
+
+            else:
+                time.sleep(0.5)
+                print(f"Wrong answer. The correct answer was {answer}")
+            break
 
         print(f"You got {points} points!")
         time.sleep(0.5)
